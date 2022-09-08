@@ -80,9 +80,14 @@ server.all('*', (req, res) =>
   res.status(404).json({ message: 'route not found' })
 );
 
-server.listen(4002, async () => {
+let port = 4002;
+if (process.env.NODE_ENV !== 'dev') {
+  port = process.env.PORT;
+}
+
+server.listen(port, async () => {
   connect()
     .then(() => console.log('connected to db'))
     .catch((err) => console.error('issues connecting to db' + err.message));
-  console.log('quicktodo running on port 4002');
+  console.log('quicktodo running on port ' + port);
 });
