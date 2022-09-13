@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const CreateTaskController = async (req, res) => {
@@ -8,11 +8,11 @@ const CreateTaskController = async (req, res) => {
     });
     return res.status(201).json({
       task,
-      message: 'task created',
+      message: "task created",
     });
   } catch {
     return res.status(400).json({
-      message: 'unable to create task',
+      message: "unable to create task",
     });
   }
 };
@@ -26,37 +26,46 @@ const FetchTasksController = async (req, res) => {
     });
     return res.status(200).json({
       task,
-      message: 'tasks fetched',
+      message: "tasks fetched",
     });
   } catch {
     return res.status(400).json({
-      message: 'unable to fetch tasks',
+      message: "unable to fetch tasks",
     });
   }
 };
 
 const FetchTaskByIdController = async (req, res) => {
   try {
-    let task = await prisma.task.findUnique(req.params.id);
+    let task = await prisma.task.findUnique({
+      where: {
+        id: req.params.id,
+      },
+    });
     if (req.user.id === task.userId) {
       return res.status(200).json({
         task,
-        message: 'task fetched',
+        message: "task fetched",
       });
     }
     return res.status(403).json({
-      message: 'forbidden',
+      message: "forbidden",
     });
-  } catch {
+  } catch (err) {
+    console.log(err);
     return res.status(400).json({
-      message: 'unable to fetch task',
+      message: "unable to fetch task",
     });
   }
 };
 
 const UpdateTaskController = async (req, res) => {
   try {
-    let taskChecked = await prisma.task.findUnique(req.params.id);
+    let taskChecked = await prisma.task.findUnique({
+      where: {
+        id: req.params.id,
+      },
+    });
     if (taskChecked.userId === req.user.id) {
       let task = await prisma.task.update({
         where: { id: req.params.id },
@@ -64,38 +73,43 @@ const UpdateTaskController = async (req, res) => {
       });
       return res.status(200).json({
         task,
-        message: 'task updated',
+        message: "task updated",
       });
     } else {
       return res.status(403).json({
-        message: 'forbidden',
+        message: "forbidden",
       });
     }
-  } catch {
+  } catch (err) {
+    console.log(err);
     return res.status(400).json({
-      message: 'unable to update task',
+      message: "unable to update task",
     });
   }
 };
 
 const DeleteTaskController = async (req, res) => {
   try {
-    let taskChecked = await prisma.task.findUnique(req.params.id);
+    let taskChecked = await prisma.task.findUnique({
+      where: {
+        id: req.params.id,
+      },
+    });
     if (taskChecked.userId === req.user.id) {
       let task = await prisma.task.delete({
         where: { id: req.params.id },
       });
       return res.status(200).json({
         task,
-        message: 'task deleted',
+        message: "task deleted",
       });
     }
     return res.status(403).json({
-      message: 'forbidden',
+      message: "forbidden",
     });
   } catch {
     return res.status(400).json({
-      message: 'unable to delete task',
+      message: "unable to delete task",
     });
   }
 };
