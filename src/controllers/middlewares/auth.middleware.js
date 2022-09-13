@@ -1,10 +1,12 @@
+const Jwt = require("jsonwebtoken");
+
 const checkIfAuthenticated = (req, res, next) => {
   if (!req.headers.authorization) {
     return res.status(401).json({
-      message: 'unauthenticated',
+      message: "unauthenticated",
     });
   }
-  let headerToken = req.headers.authorization.split(' ')[1];
+  let headerToken = req.headers.authorization.split(" ")[1];
   try {
     let user = Jwt.verify(headerToken, process.env.JWT_SECRET);
     req.user = user;
@@ -12,7 +14,7 @@ const checkIfAuthenticated = (req, res, next) => {
   } catch (err) {
     console.log(err.message);
     return res.status(403).json({
-      message: 'forbidden',
+      message: "forbidden",
     });
   }
 };
