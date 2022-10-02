@@ -32,7 +32,7 @@ const authController = async (req, res) => {
         process.env.JWT_SECRET,
         { expiresIn: '6h' }
       );
-      return res.status(400).json({
+      return res.status(200).json({
         message: 'login successful',
         token,
       });
