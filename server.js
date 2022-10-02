@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const server = express();
 const { authController } = require('./src/controllers/auth.controller');
 const validateAuthData = require('./src/validators/auth.validator');
@@ -20,6 +21,8 @@ const {
 const prisma = new PrismaClient();
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
+server.user(cors());
+server.options('*', cors());
 
 async function connect() {
   await prisma.$connect();
