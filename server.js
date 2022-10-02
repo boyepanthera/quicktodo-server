@@ -4,6 +4,8 @@ const server = express();
 const { authController } = require('./src/controllers/auth.controller');
 const validateAuthData = require('./src/validators/auth.validator');
 const { PrismaClient } = require('@prisma/client');
+const dotenv = require('dotenv');
+dotenv.config();
 const {
   checkIfAuthenticated,
 } = require('./src/controllers/middlewares/auth.middleware');
@@ -18,10 +20,14 @@ const {
   FetchTaskByIdController,
   DeleteTaskController,
 } = require('./src/controllers/task.controller');
+const {
+  getUserController,
+  getUserById,
+} = require('./src/controllers/user.controller');
 const prisma = new PrismaClient();
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
-server.user(cors());
+server.use(cors());
 server.options('*', cors());
 
 async function connect() {
@@ -34,23 +40,9 @@ server.get('/', (req, res) => {
   });
 });
 
-server.get('/user/', async (req, res) => {
-  const users = await prisma.user.findMany({});
-  res.json({
-    message: 'users fetched',
-    users,
-  });
-});
+server.get('/user/', getUserController);
 
-server.get('/user/:id', checkIfAuthenticated, async (req, res) => {
-  const oneUser = await prisma.user.findUnique({
-    where: req.user.id,
-  });
-  res.json({
-    message: 'user fetched',
-    user: oneUser,
-  });
-});
+server.get('/user/:id', checkIfAuthenticated, getUserById);
 
 server.post('/auth', validateAuthData, authController);
 
